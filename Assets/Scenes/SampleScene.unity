@@ -163,6 +163,11 @@ MonoBehaviour:
   countPlanets: 6
   countMeteors: 2
   rotation: 5
+  InputSize: 
+  InputSpeed: 
+  InputCountPlanets: 
+  InputCountMeteors: 
+  InputRotation: 
 --- !u!4 &1416116
 Transform:
   m_ObjectHideFlags: 0
@@ -320,7 +325,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 3000
   field of view: 60
   orthographic: 0
   orthographic size: 5

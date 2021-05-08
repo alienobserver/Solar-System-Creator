@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CreateSolarSystem : MonoBehaviour
 {
@@ -14,11 +16,18 @@ public class CreateSolarSystem : MonoBehaviour
 
     public float rotation;
 
-    private static readonly Random getrandom = new Random();
+    private static readonly UnityEngine.Random getrandom = new UnityEngine.Random();
+
+    public string InputSize = "";
+    public string InputSpeed = "";
+    public string InputCountPlanets = "";
+    public string InputCountMeteors = "";
+    public string InputRotation = "";
+
 
     public static int GetRandomNumber(int min, int max)
     {
-        return Random.Range(min, max);
+        return UnityEngine.Random.Range(min, max);
     }
 
     public GameObject createMain(GameObject[] Planets,float size)
@@ -26,6 +35,8 @@ public class CreateSolarSystem : MonoBehaviour
         GameObject Sun = Instantiate(Planets[0]);
 
         Sun.transform.localScale = new Vector3(size * 3, size * 3, size * 3);
+
+        Sun.name = "Main";
 
         Sun.AddComponent<SphereScript>();
 
@@ -100,6 +111,8 @@ public class CreateSolarSystem : MonoBehaviour
         Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(length * 2.5f, length / 1.5f, 0);
 
+        cam.farClipPlane = length * 6;
+
         return cam;
     }
 
@@ -111,7 +124,7 @@ public class CreateSolarSystem : MonoBehaviour
         return new Vector2(x, y);
     }
 
-    void Start()
+    public void CreateGalaxy()
     {
         if (size < 2.3f) size = 2.3f;
         int count = 0;
@@ -137,7 +150,7 @@ public class CreateSolarSystem : MonoBehaviour
             else speed = i * 3;
 
             r += length / (countPlanets + countMeteors) * 2f;
-            float planetSize = ( (float) GetRandomNumber((int)size*10, (int) size * 11) )/ 10;
+            float planetSize = ((float)GetRandomNumber((int)size * 10, (int)size * 11)) / 10;
 
             GameObject planet = createPlanet(Planets, planetSize, r, Sun);
 
@@ -152,6 +165,46 @@ public class CreateSolarSystem : MonoBehaviour
                 GameObject meteor = createMeteors(Sun, Planets, r, planetSize, i, count);
             }
         }
+    }
+
+    private void OnGUI()
+    {
+        var style = new GUIStyle(GUI.skin.label);
+        style.fontSize = 10;
+
+        GUI.Label(new Rect(Screen.width - 250, 10, 100, 20), "SPEED", style);
+        InputSpeed = GUI.TextField(new Rect(Screen.width - 150, 10, 140, 20), InputSpeed, 25);
+
+        GUI.Label(new Rect(Screen.width - 250, 35, 100, 20), "COUNT PLANETS", style);
+        InputCountPlanets = GUI.TextField(new Rect(Screen.width - 150, 35, 140, 20), InputCountPlanets, 25);
+
+        GUI.Label(new Rect(Screen.width - 250, 60, 100, 20), "COUNT METEORS", style);
+        InputCountMeteors = GUI.TextField(new Rect(Screen.width - 150, 60, 140, 20), InputCountMeteors, 25);
+
+        GUI.Label(new Rect(Screen.width - 250, 85, 100, 20), "ROATATION", style);
+        InputRotation = GUI.TextField(new Rect(Screen.width - 150, 85, 140, 20), InputRotation, 25);
+
+        if (GUI.Button(new Rect(Screen.width - 175, 110, 100, 20), "CREATE"))
+        {
+            try
+            {
+                speed = float.Parse(InputSpeed);
+                countPlanets = Int32.Parse(InputCountPlanets);
+                countMeteors = Int32.Parse(InputCountMeteors);
+                rotation = float.Parse(InputRotation);
+                if (speed <= 0 || countPlanets <= 0 || countMeteors <= 0 || rotation <= 0) throw new Exception();
+                Destroy(GameObject.Find("Main"));
+                CreateGalaxy();
+            }
+            catch(Exception e)
+            {
+            }
+        }
+    }
+
+    void Start()
+    {
+        CreateGalaxy();
     }
 
     void Update()
